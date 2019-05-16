@@ -32,7 +32,7 @@ resource "aws_route_table" "red_rt" {
 }
 resource "aws_route" "igw-route" {
   route_table_id        = "${aws_route_table.red_rt.id}"
-  destination_cidr_block= "${0.0.0.0/0}"
+  destination_cidr_block= "0.0.0.0/0"
   gateway_id            = "${aws_internet_gateway.igw.id}"
 }
 ### Route Table for Amber Subnet ###
