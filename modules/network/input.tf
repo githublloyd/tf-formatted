@@ -5,7 +5,7 @@ variable "dnsh" {}
 variable "red_cidr" {}
 variable "amber_cidr" {}
 variable "green_cidr" {}
-variable "az-irl" {}
+variable "az_irl" {}
 variable "eip" {}
 
 

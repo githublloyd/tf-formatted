@@ -1,7 +1,7 @@
 
 
 ### VPC ###
-resource "aws_vpc" "vpc-base" {
+resource "aws_vpc" "vpc_base" {
   cidr_block            = "${var.cidr}"
   instance_tenancy      = "${var.instance_tenancy}"
   enable_dns_support    = "${var.dns}"
@@ -12,20 +12,20 @@ resource "aws_vpc" "vpc-base" {
 
 ### 3 Tier Subnet Architecture ###
 resource "aws_subnet" "red" {
-  vpc_id                = "${aws_vpc.vpc-base.id}"
+  vpc_id                = "${aws_vpc.vpc_base.id}"
   cidr_block            = "${var.red_cidr}"
-  availability_zone     = "${var.az-irl}"
+  availability_zone     = "${var.az_irl}"
   map_public_ip_on_launch = true
 }
 resource "aws_subnet" "amber" {
-  vpc_id                = "${aws_vpc.vpc-base.id}"
+  vpc_id                = "${aws_vpc.vpc_base.id}"
   cidr_block            = "${var.amber_cidr}"
-  availability_zone     = "${var.az-irl}"
+  availability_zone     = "${var.az_irl}"
 }
 resource "aws_subnet" "green" {
-  vpc_id                = "${aws_vpc.vpc-base.id}"
+  vpc_id                = "${aws_vpc.vpc_base.id}"
   cidr_block            = "${var.green_cidr}"
-  availability_zone     = "${var.az-irl}"
+  availability_zone     = "${var.az_irl}"
 }
 
 
@@ -51,21 +51,22 @@ resource "aws_route" "igw-route" {
 
 ### Route Table for Amber Subnet ###
 resource "aws_route_table" "amber_rt" {
-  vpc_id                = "${aws_vpc.vpc-base.id}"
+  vpc_id                = "${aws_vpc.vpc_base.id}"
 }
 
 
 
 ### Route Table for Green Subnet ###
 resource "aws_route_table" "green_rt" {
-  vpc_id                = "${aws_vpc.vpc-base.id}"
+  vpc_id                = "${aws_vpc.vpc_base.id}"
 }
 
 
 
 ### Elastic IP ###
 resource "aws_eip" "nat" {
-  vpc                   = "${var.eip}"
+ count                 = 1
+ vpc                   = "${aws_vpc.vpc_base.id}"
 }
 
 
