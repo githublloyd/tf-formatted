@@ -10,7 +10,7 @@
 
 ### This Terraform code structure is based on a "Terramod" setup.
 
-It is broken down into 3 main sections;
+It is broken down into 3 main sections per environment;
 
 1. Network (VPC, AZs, subnets, routing and gateways, bastion host) <br>
 2. Compute (EC2, security groups) <br>
