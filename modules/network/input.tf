@@ -2,10 +2,18 @@ variable "cidr" {}
 variable "instance_tenancy" {}
 variable "dns" {}
 variable "dnsh" {}
-variable "red_cidr" {}
-variable "amber_cidr" {}
-variable "green_cidr" {}
-variable "az_irl" {}
+variable "red_cidr" {
+    type = "list"
+}
+variable "amber_cidr" {
+    type = "list"
+}
+variable "green_cidr" {
+    type = "list"
+}
+variable "az_irl" {
+    type = "list"
+}
 variable "eip" {}
 
 

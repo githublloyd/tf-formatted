@@ -13,19 +13,19 @@ resource "aws_vpc" "vpc_base" {
 ### 3 Tier Subnet Architecture ###
 resource "aws_subnet" "red" {
   vpc_id                = "${aws_vpc.vpc_base.id}"
-  cidr_block            = "${var.red_cidr}"
-  availability_zone     = "${var.az_irl}"
+  cidr_block            = "${var.red_cidr[count.index]}"
+  availability_zone     = "${element(var.az_irl, count.index)}"
   map_public_ip_on_launch = true
 }
 resource "aws_subnet" "amber" {
   vpc_id                = "${aws_vpc.vpc_base.id}"
-  cidr_block            = "${var.amber_cidr}"
-  availability_zone     = "${var.az_irl}"
+  cidr_block            = "${var.amber_cidr[count.index]}"
+  availability_zone     = "${element(var.az_irl, count.index)}"
 }
 resource "aws_subnet" "green" {
   vpc_id                = "${aws_vpc.vpc_base.id}"
-  cidr_block            = "${var.green_cidr}"
-  availability_zone     = "${var.az_irl}"
+  cidr_block            = "${var.green_cidr[count.index]}"
+  availability_zone     = "${element(var.az_irl, count.index)}"
 }
 
 
