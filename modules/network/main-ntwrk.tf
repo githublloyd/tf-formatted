@@ -13,21 +13,21 @@ resource "aws_vpc" "vpc_base" {
 ### 3 Tier Subnet Architecture ###
 resource "aws_subnet" "red" {
   vpc_id                = "${aws_vpc.vpc_base.id}"
-  count                 = "${length(var.az_num)}"
-  cidr_block            = "${var.red_cidr[count.index]}"
+  count                 = "${var.az_num}"
+  cidr_block            = "${element(var.red_cidr, count.index)}"
   availability_zone     = "${element(var.az_irl, count.index)}"
   map_public_ip_on_launch = true
 }
 resource "aws_subnet" "amber" {
   vpc_id                = "${aws_vpc.vpc_base.id}"
-  count                 = "${length(var.az_num)}"
-  cidr_block            = "${var.amber_cidr[count.index]}"
+  count                 = "${var.az_num}"
+  cidr_block            = "${element(var.amber_cidr, count.index)}"
   availability_zone     = "${element(var.az_irl, count.index)}"
 }
 resource "aws_subnet" "green" {
   vpc_id                = "${aws_vpc.vpc_base.id}"
-  count                 = "${length(var.az_num)}"
-  cidr_block            = "${var.green_cidr[count.index]}"
+  count                 = "${var.az_num}"
+  cidr_block            = "${element(var.green_cidr, count.index)}"
   availability_zone     = "${element(var.az_irl, count.index)}"
 }
 
@@ -43,9 +43,10 @@ resource "aws_internet_gateway" "igw" {
 ### Route Table and Route for Red Subnet ###
 resource "aws_route_table" "red_rt" {
   vpc_id                = "${aws_vpc.vpc_base.id}"
+  count                 = "${var.az_num}"
 }
 resource "aws_route" "igw-route" {
-  route_table_id        = "${aws_route_table.red_rt.id}"
+  route_table_id        = "${aws_route_table.red_rt.*.id}"
   destination_cidr_block= "0.0.0.0/0"
   gateway_id            = "${aws_internet_gateway.igw.id}"
 }
@@ -55,6 +56,7 @@ resource "aws_route" "igw-route" {
 ### Route Table for Amber Subnet ###
 resource "aws_route_table" "amber_rt" {
   vpc_id                = "${aws_vpc.vpc_base.id}"
+  count                 = "${var.az_num}"
 }
 
 
@@ -62,13 +64,14 @@ resource "aws_route_table" "amber_rt" {
 ### Route Table for Green Subnet ###
 resource "aws_route_table" "green_rt" {
   vpc_id                = "${aws_vpc.vpc_base.id}"
+  count                 = "${var.az_num}"
 }
 
 
 
 ### Elastic IP ###
 resource "aws_eip" "nat" {
- count                 = 1
+ count                 = "${var.az_num}"
  vpc                   = "${aws_vpc.vpc_base.id}"
 }
 
@@ -76,28 +79,33 @@ resource "aws_eip" "nat" {
 
 ### NAT Gateway ###
 resource "aws_nat_gateway" "nat" {
-	allocation_id = "${aws_eip.nat.id}"
-	subnet_id = "${aws_subnet.red.id}"
+  count                 = "${var.az_num}"
+	allocation_id = "${aws_eip.nat.*.id}"
+	subnet_id = "${aws_subnet.red.*.id}"
 	depends_on = ["aws_internet_gateway.igw"]
 }
 resource "aws_route" "protected_nat_gateway" {
-	route_table_id = "${aws_route_table.red_rt.id}"
+  count                 = "${var.az_num}"
+	route_table_id = "${aws_route_table.red_rt.*.id}"
 	destination_cidr_block = "0.0.0.0/0"
-	nat_gateway_id = "${aws_nat_gateway.nat.id}"
+	nat_gateway_id = "${aws_nat_gateway.nat.*.id}"
 }
 
 
 
 ### Route Table Association ###
 resource "aws_route_table_association" "red" {
-	subnet_id = "${aws_subnet.green.id}"
-	route_table_id = "${aws_route_table.red_rt.id}"
+	subnet_id = "${element(aws_subnet.green.*.id, count.index)}"
+	route_table_id = "${element(aws_route_table.red_rt.*.id, count.index)}"
+  count                 = "${var.az_num}"
 }
 resource "aws_route_table_association" "amber" {
-	subnet_id = "${aws_subnet.amber.id}"
-	route_table_id = "${aws_route_table.amber_rt.id}"
+	subnet_id = "${element(aws_subnet.amber.*.id, count.index)}"
+	route_table_id = "${element(aws_route_table.amber_rt.*.id, count.index)}"
+  count                 = "${var.az_num}"
 }
 resource "aws_route_table_association" "green" {
-	subnet_id = "${aws_subnet.green.id}"
-	route_table_id = "${aws_route_table.green_rt.id}"
+	subnet_id = "${element(aws_subnet.green.*.id, count.index)}"
+	route_table_id = "${element(aws_route_table.green_rt.*.id, count.index)}"
+  count                 = "${var.az_num}"
 }
