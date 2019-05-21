@@ -1,6 +1,7 @@
 module "network" {
   source = "../modules/network/"
 
+  az_num = 3
   az_irl = ["eu-west-1a","eu-west-1b","eu-west-1c"]
 
   cidr = "10.0.0.0/16"

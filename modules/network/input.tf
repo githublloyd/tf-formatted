@@ -2,6 +2,7 @@ variable "cidr" {}
 variable "instance_tenancy" {}
 variable "dns" {}
 variable "dnsh" {}
+variable "az_num" {}
 variable "red_cidr" {
     type = "list"
 }
