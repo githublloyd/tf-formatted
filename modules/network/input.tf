@@ -20,9 +20,11 @@ variable "eip" {
 }
 variable "nat_dest_cidr" {}
 variable "tagname" {
+    type = "string"
     default = "obrienl"
 }
 variable "tagenv" {
+    type = "string"
     default = "dev01"
 }
 

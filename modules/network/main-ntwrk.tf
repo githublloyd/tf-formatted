@@ -127,11 +127,6 @@ resource "aws_route" "protected_nat_gateway" {
 	route_table_id = "${element(aws_route_table.amber_rt.*.id, count.index)}"
 	destination_cidr_block = "${var.nat_dest_cidr}"
 	nat_gateway_id = "${element(aws_nat_gateway.nat.*.id, count.index)}"
-
-  timeouts {
-    create = "5m"
-  }
-
 }
 
 
