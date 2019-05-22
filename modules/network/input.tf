@@ -19,6 +19,13 @@ variable "eip" {
     type = "list"
 }
 variable "nat_dest_cidr" {}
+variable "tagname" {
+    default = "obrienl"
+}
+variable "tagenv" {
+    default = "dev01"
+}
+
 
 
 
