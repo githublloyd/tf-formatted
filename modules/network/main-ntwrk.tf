@@ -87,7 +87,7 @@ resource "aws_nat_gateway" "nat" {
 }
 resource "aws_route" "protected_nat_gateway" {
   count                 = "${var.az_num}"
-	route_table_id = "${element(aws_route_table.red_rt.*.id, count.index)}"
+	route_table_id = "${element(aws_route_table.amber_rt.*.id, count.index)}"
 	destination_cidr_block = "${var.nat_dest_cidr}"
 	nat_gateway_id = "${element(aws_nat_gateway.nat.*.id, count.index)}"
 
