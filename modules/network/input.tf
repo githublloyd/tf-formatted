@@ -15,6 +15,10 @@ variable "green_cidr" {
 variable "az_irl" {
     type = "list"
 }
-variable "eip" {}
+variable "eip" {
+    type = "list"
+}
+variable "nat_dest_cidr" {}
+
 
 

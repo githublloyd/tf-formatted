@@ -46,9 +46,10 @@ resource "aws_route_table" "red_rt" {
   count                 = "${var.az_num}"
 }
 resource "aws_route" "igw-route" {
-  route_table_id        = "${aws_route_table.red_rt.*.id}"
+  route_table_id        = "${element(aws_route_table.red_rt.*.id, count.index)}"
   destination_cidr_block= "0.0.0.0/0"
   gateway_id            = "${aws_internet_gateway.igw.id}"
+  count                 = "${var.az_num}"
 }
 
 
@@ -72,7 +73,7 @@ resource "aws_route_table" "green_rt" {
 ### Elastic IP ###
 resource "aws_eip" "nat" {
  count                 = "${var.az_num}"
- vpc                   = "${aws_vpc.vpc_base.id}"
+ vpc                   = true
 }
 
 
@@ -80,22 +81,26 @@ resource "aws_eip" "nat" {
 ### NAT Gateway ###
 resource "aws_nat_gateway" "nat" {
   count                 = "${var.az_num}"
-	allocation_id = "${aws_eip.nat.*.id}"
-	subnet_id = "${aws_subnet.red.*.id}"
+	allocation_id = "${element(aws_eip.nat.*.id, count.index)}"
+	subnet_id = "${element(aws_subnet.red.*.id, count.index)}"
 	depends_on = ["aws_internet_gateway.igw"]
 }
 resource "aws_route" "protected_nat_gateway" {
   count                 = "${var.az_num}"
-	route_table_id = "${aws_route_table.red_rt.*.id}"
-	destination_cidr_block = "0.0.0.0/0"
-	nat_gateway_id = "${aws_nat_gateway.nat.*.id}"
+	route_table_id = "${element(aws_route_table.red_rt.*.id, count.index)}"
+	destination_cidr_block = "${var.nat_dest_cidr}"
+	nat_gateway_id = "${element(aws_nat_gateway.nat.*.id, count.index)}"
+
+  timeouts {
+    create = "5m"
+  }
 }
 
 
 
 ### Route Table Association ###
 resource "aws_route_table_association" "red" {
-	subnet_id = "${element(aws_subnet.green.*.id, count.index)}"
+	subnet_id = "${element(aws_subnet.red.*.id, count.index)}"
 	route_table_id = "${element(aws_route_table.red_rt.*.id, count.index)}"
   count                 = "${var.az_num}"
 }
