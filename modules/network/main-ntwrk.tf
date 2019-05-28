@@ -35,23 +35,22 @@ resource "aws_subnet" "red" {
   availability_zone     = "${element(var.az_irl, count.index)}"
   map_public_ip_on_launch = true
    tags = "${merge(
-      local.common_tags,
-      map(
-        "Name", "variable?-subnet-red"
-      )
-    )}"
+     local.common_tags,
+     map(
+     "Name", "red-subnet-${element(var.az_irl, count.index)}"))}"
   }
+
+
+
 resource "aws_subnet" "amber" {
   vpc_id                = "${aws_vpc.vpc_base.id}"
   count                 = "${var.az_num}"
   cidr_block            = "${element(var.amber_cidr, count.index)}"
   availability_zone     = "${element(var.az_irl, count.index)}"
     tags = "${merge(
-      local.common_tags,
-      map(
-        "Name", "variable?-subnet-amber"
-      )
-    )}"
+     local.common_tags,
+     map(
+     "Name", "amber-subnet-${element(var.az_irl, count.index)}"))}"
   }
 resource "aws_subnet" "green" {
   vpc_id                = "${aws_vpc.vpc_base.id}"
@@ -59,11 +58,9 @@ resource "aws_subnet" "green" {
   cidr_block            = "${element(var.green_cidr, count.index)}"
   availability_zone     = "${element(var.az_irl, count.index)}"
     tags = "${merge(
-      local.common_tags,
-      map(
-        "Name", "variable?-subnet-green"
-      )
-    )}"
+     local.common_tags,
+     map(
+     "Name", "green-subnet-${element(var.az_irl, count.index)}"))}"
   }
 
 
