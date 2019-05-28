@@ -25,7 +25,11 @@ variable "tagname" {
 }
 variable "tagenv" {
     type = "string"
-    default = "dev01"
+    default = "dev"
+}
+variable "tagmod" {
+    type = "string"
+  default = "module/network"
 }
 
 

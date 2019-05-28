@@ -1,5 +1,15 @@
 
 
+### Common tags for all network resources ###
+
+locals {
+  common_tags = {
+    Component = "${var.tagmod}"
+    Environment = "${var.tagenv}"
+  }
+}
+
+
 ### VPC ###
 resource "aws_vpc" "vpc_base" {
   cidr_block            = "${var.cidr}"
@@ -7,11 +17,13 @@ resource "aws_vpc" "vpc_base" {
   enable_dns_support    = "${var.dns}"
   enable_dns_hostnames  = "${var.dnsh}"
 
-  tags = {
-    "Name"                = "${var.tagname}"
-    "Environment"         = "${var.tagenv}"
+  tags = "${merge(
+      local.common_tags,
+      map(
+        "Name", "${var.tagenv}-tf-vpc"
+      )
+    )}"
   }
-}
 
 
 
@@ -22,31 +34,37 @@ resource "aws_subnet" "red" {
   cidr_block            = "${element(var.red_cidr, count.index)}"
   availability_zone     = "${element(var.az_irl, count.index)}"
   map_public_ip_on_launch = true
-    tags = {
-    "Name"                = "${var.tagname}"
-    "Environment"         = "${var.tagenv}"
+   tags = "${merge(
+      local.common_tags,
+      map(
+        "Name", "variable?-subnet-red"
+      )
+    )}"
   }
-}
 resource "aws_subnet" "amber" {
   vpc_id                = "${aws_vpc.vpc_base.id}"
   count                 = "${var.az_num}"
   cidr_block            = "${element(var.amber_cidr, count.index)}"
   availability_zone     = "${element(var.az_irl, count.index)}"
-    tags = {
-    "Name"                = "${var.tagname}"
-    "Environment"         = "${var.tagenv}"
+    tags = "${merge(
+      local.common_tags,
+      map(
+        "Name", "variable?-subnet-amber"
+      )
+    )}"
   }
-}
 resource "aws_subnet" "green" {
   vpc_id                = "${aws_vpc.vpc_base.id}"
   count                 = "${var.az_num}"
   cidr_block            = "${element(var.green_cidr, count.index)}"
   availability_zone     = "${element(var.az_irl, count.index)}"
-    tags = {
-    "Name"                = "${var.tagname}"
-    "Environment"         = "${var.tagenv}"
+    tags = "${merge(
+      local.common_tags,
+      map(
+        "Name", "variable?-subnet-green"
+      )
+    )}"
   }
-}
 
 
 
