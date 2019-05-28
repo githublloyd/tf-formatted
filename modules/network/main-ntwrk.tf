@@ -68,9 +68,12 @@ resource "aws_subnet" "green" {
 ### Internet Gateway for VPC ###
 resource "aws_internet_gateway" "igw" {
   vpc_id                = "${aws_vpc.vpc_base.id}"
-    tags = {
-    "Name"                = "${var.tagname}"
-    "Environment"         = "${var.tagenv}"
+    tags = "${merge(
+      local.common_tags,
+      map(
+        "Name", "${var.tagenv}-tf-igw"
+      )
+    )}"
   }
 }
 
@@ -80,9 +83,12 @@ resource "aws_internet_gateway" "igw" {
 resource "aws_route_table" "red_rt" {
   vpc_id                = "${aws_vpc.vpc_base.id}"
   count                 = "${var.az_num}"
-    tags = {
-    "Name"                = "${var.tagname}"
-    "Environment"         = "${var.tagenv}"
+    tags = "${merge(
+      local.common_tags,
+      map(
+        "Name", "${var.tagenv}-tf-red_rt"
+      )
+    )}"
   }
 }
 resource "aws_route" "igw-route" {
@@ -98,9 +104,12 @@ resource "aws_route" "igw-route" {
 resource "aws_route_table" "amber_rt" {
   vpc_id                = "${aws_vpc.vpc_base.id}"
   count                 = "${var.az_num}"
-    tags = {
-    "Name"                = "${var.tagname}"
-    "Environment"         = "${var.tagenv}"
+    tags = "${merge(
+      local.common_tags,
+      map(
+        "Name", "${var.tagenv}-tf-amber_rt"
+      )
+    )}"
   }
 }
 
@@ -110,9 +119,12 @@ resource "aws_route_table" "amber_rt" {
 resource "aws_route_table" "green_rt" {
   vpc_id                = "${aws_vpc.vpc_base.id}"
   count                 = "${var.az_num}"
-    tags = {
-    "Name"                = "${var.tagname}"
-    "Environment"         = "${var.tagenv}"
+    tags = "${merge(
+      local.common_tags,
+      map(
+        "Name", "${var.tagenv}-tf-green_rt"
+      )
+    )}"
   }
 }
 
@@ -132,9 +144,12 @@ resource "aws_nat_gateway" "nat" {
 	allocation_id = "${element(aws_eip.nat.*.id, count.index)}"
 	subnet_id = "${element(aws_subnet.red.*.id, count.index)}"
 	depends_on = ["aws_internet_gateway.igw"]
-    tags = {
-    "Name"                = "${var.tagname}"
-    "Environment"         = "${var.tagenv}"
+    tags = "${merge(
+      local.common_tags,
+      map(
+        "Name", "${var.tagenv}-tf-nat_gw"
+      )
+    )}"
   }
 }
 resource "aws_route" "protected_nat_gateway" {
