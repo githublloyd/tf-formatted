@@ -75,7 +75,6 @@ resource "aws_internet_gateway" "igw" {
       )
     )}"
   }
-}
 
 
 
@@ -90,7 +89,6 @@ resource "aws_route_table" "red_rt" {
       )
     )}"
   }
-}
 resource "aws_route" "igw-route" {
   route_table_id        = "${element(aws_route_table.red_rt.*.id, count.index)}"
   destination_cidr_block= "0.0.0.0/0"
@@ -111,7 +109,7 @@ resource "aws_route_table" "amber_rt" {
       )
     )}"
   }
-}
+
 
 
 
@@ -126,7 +124,6 @@ resource "aws_route_table" "green_rt" {
       )
     )}"
   }
-}
 
 
 
@@ -151,7 +148,7 @@ resource "aws_nat_gateway" "nat" {
       )
     )}"
   }
-}
+
 resource "aws_route" "protected_nat_gateway" {
   count                 = "${var.az_num}"
 	route_table_id = "${element(aws_route_table.amber_rt.*.id, count.index)}"
