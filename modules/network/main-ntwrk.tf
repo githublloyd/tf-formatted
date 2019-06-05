@@ -1,5 +1,4 @@
 
-
 ### Common tags for all network resources ###
 
 locals {
@@ -26,7 +25,6 @@ resource "aws_vpc" "vpc_base" {
   }
 
 
-
 ### 3 Tier Subnet Architecture ###
 resource "aws_subnet" "red" {
   vpc_id                = "${aws_vpc.vpc_base.id}"
@@ -39,7 +37,6 @@ resource "aws_subnet" "red" {
      map(
      "Name", "red-subnet-${element(var.az_irl, count.index)}"))}"
   }
-
 
 
 resource "aws_subnet" "amber" {
@@ -64,7 +61,6 @@ resource "aws_subnet" "green" {
   }
 
 
-
 ### Internet Gateway for VPC ###
 resource "aws_internet_gateway" "igw" {
   vpc_id                = "${aws_vpc.vpc_base.id}"
@@ -75,7 +71,6 @@ resource "aws_internet_gateway" "igw" {
       )
     )}"
   }
-
 
 
 ### Route Table and Route for Red Subnet ###
@@ -97,7 +92,6 @@ resource "aws_route" "igw-route" {
 }
 
 
-
 ### Route Table for Amber Subnet ###
 resource "aws_route_table" "amber_rt" {
   vpc_id                = "${aws_vpc.vpc_base.id}"
@@ -109,8 +103,6 @@ resource "aws_route_table" "amber_rt" {
       )
     )}"
   }
-
-
 
 
 ### Route Table for Green Subnet ###
@@ -126,13 +118,11 @@ resource "aws_route_table" "green_rt" {
   }
 
 
-
 ### Elastic IP ###
 resource "aws_eip" "nat" {
  count                 = "${var.az_num}"
  vpc                   = true
 }
-
 
 
 ### NAT Gateway ###
