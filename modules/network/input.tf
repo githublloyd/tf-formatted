@@ -1,3 +1,15 @@
+variable "tagname" {
+    type = "string"
+    default = "obrienl"
+}
+variable "tagenv" {
+    type = "string"
+    default = "dev"
+}
+variable "tagmod" {
+    type = "string"
+  default = "module/network"
+}
 variable "cidr" {}
 variable "instance_tenancy" {}
 variable "dns" {}
@@ -19,19 +31,3 @@ variable "eip" {
     type = "list"
 }
 variable "nat_dest_cidr" {}
-variable "tagname" {
-    type = "string"
-    default = "obrienl"
-}
-variable "tagenv" {
-    type = "string"
-    default = "dev"
-}
-variable "tagmod" {
-    type = "string"
-  default = "module/network"
-}
-
-
-
-

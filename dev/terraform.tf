@@ -1,3 +1,6 @@
+
+  
+
 module "network" {
   source            = "../modules/network/"
 
@@ -15,4 +18,14 @@ module "network" {
   dnsh              = "true"
   eip               = "default"
   nat_dest_cidr     = "0.0.0.0/0"
+}
+
+module "compute" {
+  source = "../modules/compute/"
+
+  ami               = ""
+  count             = "2"
+  instance_type     = "t2.medium"
+  key_name          = "lloydaxe.ppk"
+  
 }
