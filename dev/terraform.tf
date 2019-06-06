@@ -3,6 +3,8 @@
 
 module "network" {
   source            = "../modules/network/"
+  
+# az_num, az_irl and each *colour*_cidr need to be the same amount
 
   az_num            = 3
   az_irl            = ["eu-west-1a","eu-west-1b","eu-west-1c"]
@@ -23,9 +25,12 @@ module "network" {
 module "compute" {
   source = "../modules/compute/"
 
-  ami               = ""
-  count             = "2"
-  instance_type     = "t2.medium"
-  key_name          = "lloydaxe.ppk"
+# instance_name and ec2_num need to be the same amount
+
+  ec2_num            = "2"
+  instance_name      = ["web-001","web-002"]
+  instance_ami       = "ami-6e28b517"
+  instance_group     = "t2.medium"
+  ami_key_pair       = "lloydaxe.ppk"
   
 }
