@@ -38,7 +38,6 @@ resource "aws_subnet" "red" {
      "Name", "red-subnet-${element(var.az_irl, count.index)}"))}"
   }
 
-
 resource "aws_subnet" "amber" {
   vpc_id                = "${aws_vpc.vpc_base.id}"
   count                 = "${var.az_num}"
@@ -49,6 +48,7 @@ resource "aws_subnet" "amber" {
      map(
      "Name", "amber-subnet-${element(var.az_irl, count.index)}"))}"
   }
+
 resource "aws_subnet" "green" {
   vpc_id                = "${aws_vpc.vpc_base.id}"
   count                 = "${var.az_num}"
@@ -84,6 +84,7 @@ resource "aws_route_table" "red_rt" {
       )
     )}"
   }
+  
 resource "aws_route" "igw-route" {
   route_table_id        = "${element(aws_route_table.red_rt.*.id, count.index)}"
   destination_cidr_block= "0.0.0.0/0"
@@ -164,3 +165,31 @@ resource "aws_route_table_association" "green" {
 	route_table_id = "${element(aws_route_table.green_rt.*.id, count.index)}"
   count                 = "${var.az_num}"
 }
+
+
+resource "aws_security_group" "sg-web" {
+  vpc_id                = "${aws_vpc.vpc_base.id}"
+
+  ingress {
+		from_port = 8080
+		to_port = 8080
+		protocol = "tcp"
+		cidr_blocks = ["0.0.0.0/0"]	
+	}
+
+	ingress {
+		from_port = 22
+		to_port = 22
+		protocol = "tcp"
+		cidr_blocks = ["89.101.155.58/32"]
+	}
+
+	egress {
+		from_port = 0
+		to_port = 0
+		protocol = "-1"
+		cidr_blocks = ["0.0.0.0/0"]
+	}
+
+}
+

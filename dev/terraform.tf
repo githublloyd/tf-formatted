@@ -25,12 +25,11 @@ module "network" {
 module "compute" {
   source = "../modules/compute/"
 
-# instance_name and ec2_num need to be the same amount
-
-  ec2_num            = "2"
-  instance_name      = ["web-001","web-002"]
   instance_ami       = "ami-6e28b517"
+  ec2_num            = "3"
   instance_group     = "t2.medium"
-  ami_key_pair       = "lloydaxe.ppk"
-  
+  ami_key            = "lloydaxe"
+  instance_name      = ["web-001","web-002","web-003"]
+  security_group     = "module.network.sg-web"
+  assoc_public_ip    = "true"
 }

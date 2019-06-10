@@ -13,7 +13,22 @@ variable "tagmod" {
 variable "instance_name" {
     type = "list"
 }
-variable "instance_ami" {}
-variable "ec2_num" {}
-variable "instance_group" {}
-variable "ami_key_pair" {}
+variable "instance_ami" {
+
+}
+variable "ec2_num" {
+
+}
+variable "instance_group" {
+
+}
+
+variable "security_group" {
+    
+}
+variable "assoc_public_ip" {
+  
+}
+variable "ami_key" {
+  
+}

@@ -10,11 +10,21 @@ variable "tagmod" {
     type = "string"
   default = "module/network"
 }
-variable "cidr" {}
-variable "instance_tenancy" {}
-variable "dns" {}
-variable "dnsh" {}
-variable "az_num" {}
+variable "cidr" {
+    
+}
+variable "instance_tenancy" {
+
+}
+variable "dns" {
+
+}
+variable "dnsh" {
+
+}
+variable "az_num" {
+
+}
 variable "red_cidr" {
     type = "list"
 }
@@ -30,4 +40,6 @@ variable "az_irl" {
 variable "eip" {
     type = "list"
 }
-variable "nat_dest_cidr" {}
+variable "nat_dest_cidr" {
+
+}
