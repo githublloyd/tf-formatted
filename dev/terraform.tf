@@ -30,10 +30,13 @@ module "compute" {
   security_group     = "${module.network.sg-web}"
   assoc_public_ip    = "true"
   subnet_id          = ["${module.network.sn-red}"]
-  target_group_arn = "${element(module.alb.target_group_arns, 0)}"
+  target_group_arn   = "${element(module.alb.target_group_arns, 0)}"
 
 }
 
+
+
+### Module pulled on Terraform init from HashiCorp Terraform Registry 
 
 module "alb" {
   source                        = "terraform-aws-modules/alb/aws"
