@@ -31,7 +31,7 @@ resource "aws_subnet" "red" {
   count                 = "${var.az_num}"
   cidr_block            = "${element(var.red_cidr, count.index)}"
   availability_zone     = "${element(var.az_irl, count.index)}"
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = "${var.pub_ip_on_launch}"
    tags = "${merge(
      local.common_tags,
      map(
@@ -87,7 +87,7 @@ resource "aws_route_table" "red_rt" {
   
 resource "aws_route" "igw-route" {
   route_table_id        = "${element(aws_route_table.red_rt.*.id, count.index)}"
-  destination_cidr_block= "0.0.0.0/0"
+  destination_cidr_block= "${var.igw_dest_cidr}"
   gateway_id            = "${aws_internet_gateway.igw.id}"
   count                 = "${var.az_num}"
 }

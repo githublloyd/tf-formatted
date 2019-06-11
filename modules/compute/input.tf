@@ -23,12 +23,19 @@ variable "instance_group" {
 
 }
 
-variable "security_group" {
-    
-}
 variable "assoc_public_ip" {
   
 }
 variable "ami_key" {
   
+}
+variable "security_group" {
+  
+}
+variable "subnet_id" {
+  type = "list"
+}
+variable "target_group_arn" {
+  type = "string"
+  default = ""
 }

@@ -4,4 +4,7 @@ output "sg-web" {
 output "vpc_id" {
   value = "${aws_vpc.vpc_base.id}"
 }
+output "sn-red" {
+  value = "${aws_subnet.red.*.id}"
+}
 
