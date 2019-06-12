@@ -35,7 +35,6 @@ variable "security_group" {
 variable "subnet_id" {
   type = "list"
 }
-variable "target_group_arn" {
-  type = "string"
-  default = ""
+variable "trgt_grp_arn" {
+  
 }
