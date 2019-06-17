@@ -61,19 +61,8 @@ resource "aws_subnet" "green" {
   }
 
 
-### Internet Gateway for VPC ###
-resource "aws_internet_gateway" "igw" {
-  vpc_id                = "${aws_vpc.vpc_base.id}"
-    tags = "${merge(
-      local.common_tags,
-      map(
-        "Name", "${var.tagenv}-tf-igw"
-      )
-    )}"
-  }
 
-
-### Route Table and Route for Red Subnet ###
+### Route Table for Red Subnet ###
 resource "aws_route_table" "red_rt" {
   vpc_id                = "${aws_vpc.vpc_base.id}"
   count                 = "${var.az_num}"
@@ -85,13 +74,6 @@ resource "aws_route_table" "red_rt" {
     )}"
   }
   
-resource "aws_route" "igw-route" {
-  route_table_id        = "${element(aws_route_table.red_rt.*.id, count.index)}"
-  destination_cidr_block= "${var.igw_dest_cidr}"
-  gateway_id            = "${aws_internet_gateway.igw.id}"
-  count                 = "${var.az_num}"
-}
-
 
 ### Route Table for Amber Subnet ###
 resource "aws_route_table" "amber_rt" {
@@ -119,6 +101,45 @@ resource "aws_route_table" "green_rt" {
   }
 
 
+### Route Table Association ###
+resource "aws_route_table_association" "red" {
+	subnet_id = "${element(aws_subnet.red.*.id, count.index)}"
+	route_table_id = "${element(aws_route_table.red_rt.*.id, count.index)}"
+  count                 = "${var.az_num}"
+}
+resource "aws_route_table_association" "amber" {
+	subnet_id = "${element(aws_subnet.amber.*.id, count.index)}"
+	route_table_id = "${element(aws_route_table.amber_rt.*.id, count.index)}"
+  count                 = "${var.az_num}"
+}
+resource "aws_route_table_association" "green" {
+	subnet_id = "${element(aws_subnet.green.*.id, count.index)}"
+	route_table_id = "${element(aws_route_table.green_rt.*.id, count.index)}"
+  count                 = "${var.az_num}"
+}
+
+### Internet Gateway for VPC ###
+resource "aws_internet_gateway" "igw" {
+  vpc_id                = "${aws_vpc.vpc_base.id}"
+    tags = "${merge(
+      local.common_tags,
+      map(
+        "Name", "${var.tagenv}-tf-igw"
+      )
+    )}"
+  }
+
+
+### Internet Gateway Route ###
+resource "aws_route" "igw-route" {
+  route_table_id        = "${element(aws_route_table.red_rt.*.id, count.index)}"
+  destination_cidr_block= "0.0.0.0/0"
+  gateway_id            = "${aws_internet_gateway.igw.id}"
+  count                 = "${var.az_num}"
+}
+
+
+
 ### Elastic IP ###
 resource "aws_eip" "nat" {
  count                 = "${var.az_num}"
@@ -143,28 +164,11 @@ resource "aws_nat_gateway" "nat" {
 resource "aws_route" "protected_nat_gateway" {
   count                 = "${var.az_num}"
 	route_table_id = "${element(aws_route_table.amber_rt.*.id, count.index)}"
-	destination_cidr_block = "${var.nat_dest_cidr}"
+	destination_cidr_block = "${var.nat_dest_cidr}" ##
 	nat_gateway_id = "${element(aws_nat_gateway.nat.*.id, count.index)}"
 }
 
 
-
-### Route Table Association ###
-resource "aws_route_table_association" "red" {
-	subnet_id = "${element(aws_subnet.red.*.id, count.index)}"
-	route_table_id = "${element(aws_route_table.red_rt.*.id, count.index)}"
-  count                 = "${var.az_num}"
-}
-resource "aws_route_table_association" "amber" {
-	subnet_id = "${element(aws_subnet.amber.*.id, count.index)}"
-	route_table_id = "${element(aws_route_table.amber_rt.*.id, count.index)}"
-  count                 = "${var.az_num}"
-}
-resource "aws_route_table_association" "green" {
-	subnet_id = "${element(aws_subnet.green.*.id, count.index)}"
-	route_table_id = "${element(aws_route_table.green_rt.*.id, count.index)}"
-  count                 = "${var.az_num}"
-}
 
 
 

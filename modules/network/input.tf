@@ -46,6 +46,4 @@ variable "nat_dest_cidr" {
 variable "pub_ip_on_launch" {
 
 }
-variable "igw_dest_cidr" {
-  
-}
+

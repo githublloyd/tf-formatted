@@ -12,7 +12,6 @@ module "network" {
   green_cidr        = ["10.0.7.0/24","10.0.8.0/24","10.0.9.0/24"]
   pub_ip_on_launch  = "true"
   eip               = "default"
-  igw_dest_cidr     = "0.0.0.0/0"
   nat_dest_cidr     = "0.0.0.0/0"
   
 }
@@ -25,7 +24,7 @@ module "compute" {
   instance_ami       = "ami-6e28b517"
   ec2_num            = "3"
   instance_group     = "t2.medium"
-  ami_key            = "lloydaxe"
+  ami_key            = "XYZXYZXYZ"
   instance_name      = ["web-001","web-002","web-003"]
   security_group     = "${module.network.sg-web}"
   assoc_public_ip    = "true"
