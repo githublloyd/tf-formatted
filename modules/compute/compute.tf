@@ -15,16 +15,17 @@ resource "aws_instance" "web-instance" {
   associate_public_ip_address = "${var.assoc_public_ip}"
   subnet_id             = "${element(var.subnet_id, count.index)}"
 
-
   tags = "${merge(
      local.common_tags,
      map(
      "Name", "instance-${element(var.instance_name, count.index)}"))}"
   }
 
-resource "aws_lb_target_group_attachment" "test" {
-  count             = "${var.target_group_arn == "" ? 0 : var.ec2_num}"
-  target_group_arn = "${var.target_group_arn}"
+
+### Application Load Balancer: Target Group Attachment ###
+
+resource "aws_lb_target_group_attachment" "lb-tg-attach" {
+  target_group_arn = "${var.trgt_grp_arn}"
   target_id        = "${element(aws_instance.web-instance.*.id, count.index)}"
   port             = 80
 }

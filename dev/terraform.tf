@@ -14,7 +14,7 @@ module "network" {
   eip               = "default"
   igw_dest_cidr     = "0.0.0.0/0"
   nat_dest_cidr     = "0.0.0.0/0"
-
+  
 }
 
 
@@ -29,26 +29,7 @@ module "compute" {
   instance_name      = ["web-001","web-002","web-003"]
   security_group     = "${module.network.sg-web}"
   assoc_public_ip    = "true"
-  subnet_id          = ["${module.network.sn-red}"]
-  target_group_arn   = "${element(module.alb.target_group_arns, 0)}"
-
-}
-
-
-
-### Module pulled on Terraform init from HashiCorp Terraform Registry 
-
-module "alb" {
-  source                        = "terraform-aws-modules/alb/aws"
-  load_balancer_name            = "my-alb"
-  security_groups               = ["${module.network.sg-web}"]
-  subnets                       = ["${module.network.sn-red}"]
-  tags                          = "${map("Environment", "test")}"
-  vpc_id                        = "${module.network.vpc_id}"
-  http_tcp_listeners            = "${list(map("port", "80", "protocol", "HTTP"))}"
-  http_tcp_listeners_count      = "1"
-  target_groups                 = "${list(map("name", "web-tg", "backend_protocol", "HTTP", "backend_port", "80"))}"
-  target_groups_count           = "1"
-  logging_enabled               = "false"
-  
+  subnet_id          = ["${module.network.dmz}"]
+  trgt_grp_arn      = "${module.network.lb-trgt-grp-arn}"
+ 
 }

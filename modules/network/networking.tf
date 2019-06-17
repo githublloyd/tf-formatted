@@ -167,6 +167,8 @@ resource "aws_route_table_association" "green" {
 }
 
 
+
+### Security Group: EC2 Web ###
 resource "aws_security_group" "sg-web" {
   vpc_id                = "${aws_vpc.vpc_base.id}"
 
@@ -193,3 +195,97 @@ resource "aws_security_group" "sg-web" {
 
 }
 
+
+
+### Security Group: ALB ### NOT ATTACHED TO ANY RESOURCE
+resource "aws_security_group" "sg-alb" {
+  vpc_id                = "${aws_vpc.vpc_base.id}"
+
+  ingress {
+		from_port = 8080
+		to_port = 8080
+		protocol = "tcp"
+		cidr_blocks = ["0.0.0.0/0"]	
+	}
+
+	ingress {
+		from_port = 80
+		to_port = 80
+		protocol = "tcp"
+		cidr_blocks = ["0.0.0.0/0"]
+	}
+
+	ingress {
+		from_port = 443
+		to_port = 443
+		protocol = "tcp"
+		cidr_blocks = ["0.0.0.0/0"]
+	}
+
+	egress {
+		from_port = 0
+		to_port = 0
+		protocol = "-1"
+		cidr_blocks = ["0.0.0.0/0"]
+	}
+
+}
+
+
+### Appllication Load Balancer: Web ###
+
+resource "aws_lb" "lb-web" {
+  
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = ["${aws_security_group.sg-alb.id}"]
+  subnets            = ["${aws_subnet.red.*.id}"]
+  idle_timeout       = 60
+  
+  enable_deletion_protection = false # Check to false in Console if $ terraform destroy gives out
+
+#  access_logs {
+#    bucket  = "${aws_s3_bucket.lloydob-v1bucket.bucket}"
+#    prefix  = "lb-web"
+#    enabled = true
+#  }
+
+  tags = "${merge(
+      local.common_tags,
+      map(
+        "Name", "${var.tagenv}-tf-lb-web"
+      )
+    )}"
+}
+
+
+
+### Application Load Balancer: Target Group ###
+
+resource "aws_lb_target_group" "lb-tg-web" {
+
+  port     = 80
+  protocol = "HTTP"
+  vpc_id   = "${aws_vpc.vpc_base.id}"
+
+  tags = "${merge(
+      local.common_tags,
+      map(
+        "Name", "${var.tagenv}-tf-lb-tg-web"
+      )
+    )}"
+}
+
+
+### Application Load Balancer: Listener ###
+
+resource "aws_lb_listener" "lb-listener" {
+  load_balancer_arn = "${aws_lb.lb-web.arn}"
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.lb-tg-web.arn}"
+  }
+}
